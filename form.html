@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Quagmire&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New York Empire Baseball Training Follow-Up Form</title>
+    <style>
+        body {
+            font-family: 'Quagmire', Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: auto;
+            text-align: left;
+            background-color: #f2f2f2;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Quagmire', Arial, sans-serif;
+        }
+
+        select {
+            padding: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .checkbox-group label {
+            display: block;
+            margin-left: 10px;
+        }
+
+        .error {
+            border: 2px solid red;
+            background-color: #ffdddd;
+        }
+
+        button {
+            background-color: navy;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: darkblue;
+        }
+
+        h1 {
+            color: navy;
+        }
+
+        h2 {
+            color: darkblue;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navigation">
+        <h1>Training Form</h1>
+        <button onclick="goToPlayersList()">Players</button>
+    </div>
+    <form id="trainingForm">
+
+        <!-- Coach Info -->
+        <h2>Coach Info</h2>
+        <label for="coach_email">Coach Email:</label>
+        <input type="email" id="coach_email" required>
+
+        <label for="coach_name">Coach Name:</label>
+        <input type="text" id="coach_name" required>
+
+        <!-- Player Selection -->
+        <h2>Player Selection</h2>
+        <label for="player_name">Player Name:</label>
+        <select id="player_name">
+            <option value="">Select Existing Player</option>
+            <!-- Dynamically populated -->
+        </select>
+        <label for="new_player_name">Or Enter New Player Name:</label>
+        <input type="text" id="new_player_name">
+
+        <!-- Follow Up Category -->
+        <h2>Follow Up For:</h2>
+        <select id="follow_up" required onchange="toggleLessonOptions()">
+            <option value="">--Select--</option>
+            <option value="Lesson">Lesson</option>
+            <option value="Class">Class</option>
+            <option value="Team Training">Team Training</option>
+            <option value="Camp">Camp</option>
+            <option value="In Game">In Game</option>
+        </select>
+
+        <!-- Lesson Type Selection (Only if "Lesson" is selected) -->
+        <div id="lesson_types" class="hidden">
+            <h2>Lesson Type:</h2>
+            <div class="checkbox-group">
+                <label><input type="checkbox" value="Hitting"> Hitting</label>
+                <label><input type="checkbox" value="Pitching"> Pitching</label>
+                <label><input type="checkbox" value="Fielding"> Fielding</label>
+                <label><input type="checkbox" value="Strength and Conditioning"> Strength and Conditioning</label>
+            </div>
+        </div>
+
+        <!-- Coach Comments -->
+        <h2>Coach Comments:</h2>
+        <textarea id="coach_comments"></textarea>
+
+        <!-- Additional Warmup -->
+        <h2>Additional Warmup:</h2>
+        <input type="hidden" id="warmup" value="New York Empire Baseball Dynamic Warmup">
+        <div class="checkbox-group">
+            <label><input type="checkbox" value="Bands and Wrist Weights"> Bands and Wrist Weights</label>
+            <label><input type="checkbox" value="NPA Arm Warmup"> NPA Arm Warmup</label>
+        </div>
+
+        <!-- Hitting Drills -->
+        <h2>Hitting Homework:</h2>
+        <div class="checkbox-group" id="hitting_drills"></div>
+
+        <!-- Pitching Drills -->
+        <h2>Pitching Homework:</h2>
+        <div class="checkbox-group" id="pitching_drills"></div>
+
+        <!-- Fielding Drills -->
+        <h2>Fielding Homework:</h2>
+        <div class="checkbox-group" id="fielding_drills"></div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        function loadPlayers() {
+            fetch("http://localhost:8080/players") // ✅ Fetch player names from backend
+                .then(response => response.json())
+                .then(players => {
+                    const playerSelect = document.getElementById("player_name");
+                    playerSelect.innerHTML = '<option value="">Select Existing Player</option>'; // Reset options
+
+                    if (players.length === 0) {
+                        playerSelect.innerHTML += '<option value="">No players found</option>';
+                    } else {
+                        players.forEach(player => {
+                            const option = document.createElement("option");
+                            option.value = player;
+                            option.textContent = player;
+                            playerSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => console.error("Error loading players:", error));
+        }
+
+// ✅ Load player names when the page loads
+        window.onload = loadPlayers;
+
+        // Drill options
+       const hittingDrills = [
+            "New York Empire Baseball Hitting Setup",
+            "New York Empire Baseball Sequenced Towel Swings",
+            "New York Empire Baseball Front Arm Towel/Frisbee Swings",
+            "New York Empire Baseball Towel Plane Swings",
+            "New York Empire Baseball Delt to Delt Drill",
+            "New York Empire Baseball Snap Drills",
+            "New York Empire Baseball Reverse Snap Drill",
+            "New York Empire Baseball Lower Half Loads",
+            "New York Empire Baseball Upper Half Loads",
+            "New York Empire Baseball Step Spin Swings",
+            "New York Empire Baseball RAP Drill",
+            "New York Empire Baseball Wall Swings",
+            "New York Empire Baseball Stop & Bop",
+            "New York Empire Baseball Barrel Turns",
+            "New York Empire Baseball Offset Closed",
+            "New York Empire Baseball Offset Open",
+            "New York Empire Baseball Hookem Drill",
+            "New York Empire Baseball Babe Ruth Swings",
+            "New York Empire Baseball BBSB",
+            "New York Empire Baseball Eyes Closed Tee",
+            "New York Empire Baseball Ball Hit",
+            "New York Empire Baseball Intention Swings",
+            "New York Empire Baseball I O Bifurcation",
+            "New York Empire Baseball High Tee No Ball",
+            "New York Empire Baseball Weighted Bat Series"
+        ];
+
+        const pitchingDrills = [
+            'Reverse Throws',
+            'New York Empire Baseball Pivot Picks',
+            'New York Empire Baseball TAP Drill',
+            'New York Empire Baseball Sequenced Towel Whips',
+            'New York Empire Baseball Step Spin Throw',
+            'New York Empire Baseball Front Arm Focus',
+            'New York Empire Baseball Hershisers',
+            'New York Empire Baseball Rockers',
+            'New York Empire Baseball Roll In\'s',
+            'New York Empire Baseball Flip and Whip',
+            'New York Empire Baseball Posture Throws',
+            'New York Empire Baseball Step Back Throws',
+            'New York Empire Baseball Drop Steps',
+            'New York Empire Baseball Walking Windup'
+        ];
+        const fieldingDrills = [
+            'New York Empire Baseball First Base Footwork',
+            'New York Empire Baseball First Base Approach',
+            'New York Empire Baseball Short Hop Drill',
+            'New York Empire Baseball Step and Catch Level One and Two',
+            'New York Empire Baseball Step and Catch, Back Front Throw',
+            'New York Empire Baseball Pop and Flop',
+            'New York Empire Baseball Charge and Chop',
+            'New York Empire Baseball Charge and Chop, Right Left Throw',
+            'New York Empire Baseball Ground Ball Approach',
+            'New York Empire Baseball Creating Your Own Hop'
+
+        ];
+
+        // Populate drill checkboxes
+        function populateDrills(containerId, drills) {
+            const container = document.getElementById(containerId);
+            drills.forEach(drill => {
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = drill;
+                container.appendChild(checkbox);
+                container.appendChild(document.createTextNode(drill));
+                container.appendChild(document.createElement("br"));
+            });
+        }
+
+        populateDrills("hitting_drills", hittingDrills);
+        populateDrills("pitching_drills", pitchingDrills);
+        populateDrills("fielding_drills", fieldingDrills);
+
+        function toggleLessonOptions() {
+            document.getElementById("lesson_types").classList.toggle("hidden", document.getElementById("follow_up").value !== "Lesson");
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = ["coach_email", "coach_name", "follow_up"];
+
+            requiredFields.forEach(id => {
+                const field = document.getElementById(id);
+                if (!field.value) {
+                    field.classList.add("error");
+                    isValid = false;
+                } else {
+                    field.classList.remove("error");
+                }
+            });
+
+            return isValid;
+        }
+
+        document.getElementById("trainingForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            if (!validateForm()) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+
+            const formData = {
+                coach_email: document.getElementById("coach_email").value,
+                coach_name: document.getElementById("coach_name").value,
+                player_name: document.getElementById("player_name").value || document.getElementById("new_player_name").value,
+                follow_up: document.getElementById("follow_up").value,
+                lesson_type: Array.from(document.querySelectorAll("#lesson_types input:checked")).map(el => el.value).join(", "),
+                coach_comments: document.getElementById("coach_comments").value,
+                warmup: "New York Empire Baseball Dynamic Warmup, " + Array.from(document.querySelectorAll("input[type=checkbox]:checked")).map(el => el.value).join(", "),
+                hitting_homework: Array.from(document.querySelectorAll("#hitting_drills input:checked")).map(el => el.value).join(", "),
+                pitching_homework: Array.from(document.querySelectorAll("#pitching_drills input:checked")).map(el => el.value).join(", "),
+                fielding_homework: Array.from(document.querySelectorAll("#fielding_drills input:checked")).map(el => el.value).join(", ")
+            };
+
+            fetch("http://localhost:8080/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "Form submitted successfully!") {
+                    window.location.href = "success.html";  // ✅ Redirects to the success page
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                alert("Error submitting form!");
+                console.error("Form Submission Error:", error);
+            });
+        });
+        function goToPlayersList() {
+            window.location.href = "players.html";
+        }
+    </script>
+
+</body>
+</html>

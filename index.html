@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 40px; }
+        form { max-width: 400px; margin: auto; }
+        label, input { display: block; width: 100%; margin-bottom: 10px; }
+        button { background-color: navy; color: white; padding: 10px; border: none; cursor: pointer; }
+        button:hover { background-color: darkblue; }
+    </style>
+</head>
+<body>
+
+    <h1>Submit Your Info</h1>
+    <form id="form">
+        <label for="coachname">Coach Name:</label>
+        <input type="text" id="coachname" required>
+
+        <label for="coachname">Email:</label>
+        <input type="text" id="coachname" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Entries</h2>
+    <ul id="entries"></ul>
+
+    <script>
+        document.getElementById("form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const formData = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value
+            };
+
+            fetch("http://localhost:8080/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                fetchEntries(); // Refresh entries
+            })
+            .catch(error => alert("Error submitting form!"));
+        });
+
+        function fetchEntries() {
+            fetch("http://localhost:8080/entries")
+            .then(response => response.json())
+            .then(data => {
+                const entryList = document.getElementById("entries");
+                entryList.innerHTML = "";
+                data.forEach(entry => {
+                    const li = document.createElement("li");
+                    li.textContent = `${entry.name} - ${entry.email}`;
+                    entryList.appendChild(li);
+                });
+            });
+        }
+
+        fetchEntries(); // Load entries on page load
+    </script>
+
+</body>
+</html>
