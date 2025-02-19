@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Details</title>
+    <style>
+        body {
+            font-family:"Quagmire", Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #dataContainer {
+            text-align: left;
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navigation">
+        <h1 id="playerName">Player Details</h1>
+        <button onclick="goToForm()">Back to Form</button>
+        <button onclick="goToPlayersList()">Back to Players List</button>
+    </div>
+    <div id="dataContainer">
+        <table>
+            <tr>
+                <th colspan="3">Coach's Comments:</th>
+            </tr>
+            <tr>
+                <td colspan="3" id="coachComments">Loading...</td>
+            </tr>
+            <tr>
+                <th>Hitting Drills</th>
+                <th>Pitching Drills</th>
+                <th>Fielding Drills</th>
+            </tr>
+            <tr>
+                <td id="hittingDrills">Loading...</td>
+                <td id="pitchingDrills">Loading...</td>
+                <td id="fieldingDrills">Loading...</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+
+        function getPlayerData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const playerName = urlParams.get("name");
+
+            if (!playerName) {
+                document.getElementById("playerName").textContent = "No player selected";
+                return;
+            }
+
+            document.getElementById("playerName").textContent = playerName;
+
+            fetch(`http://localhost:8080/player/${encodeURIComponent(playerName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        document.getElementById("dataContainer").innerHTML = `<p>${data.message}</p>`;
+                    } else {
+                        const coachCommentsLinks = createLinks(data.coach_comments);
+                        const hittingDrillsLinks = createLinks(data.hitting_homework);
+                        const pitchingDrillsLinks = createLinks(data.pitching_homework);
+                        const fieldingDrillsLinks = createLinks(data.fielding_homework);
+
+                        document.getElementById("coachComments").innerHTML = coachCommentsLinks;
+                        document.getElementById("hittingDrills").innerHTML = hittingDrillsLinks;
+                        document.getElementById("pitchingDrills").innerHTML = pitchingDrillsLinks;
+                        document.getElementById("fieldingDrills").innerHTML = fieldingDrillsLinks;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading player data:", error);
+                    document.getElementById("dataContainer").innerHTML = `<p>Error loading player data. Please try again.</p>`;
+                });
+        }
+
+        function createLinks(dataString) {
+            const dataArray = dataString.split(",").map(item => item.trim());
+            const linkMap = {
+                "New York Empire Baseball Hitting Setup": "https://youtu.be/hJfdtIE8qro",
+                "New York Empire Baseball Sequenced Towel Swings": "https://youtu.be/_WBtnLGjm2s",
+                'New York Empire Baseball Front Arm Towel/Frisbee Swings': "https://youtu.be/MFiGWDWM_Ik",
+                'New York Empire Baseball Towel Plane Swings': "https://youtu.be/zCfbo0m4xfA",
+                'New York Empire Baseball Delt to Delt Drill': "https://youtu.be/En_gq9pUYec/",
+                'New York Empire Baseball Snap Drills':'https://youtu.be/Y5_ERkxgZEQ',
+                'New York Empire Baseball Reverse Snap Drill':'https://youtu.be/2PRUjchHYBw',
+                'New York Empire Baseball Lower Half Loads':'https://youtu.be/7jJiYo1biqI',
+                "New York Empire Baseball Upper Half Loads":'https://youtube.com/shorts/YEHYygmzIdA',
+                "New York Empire Baseball Step Spin Swings":'https://youtu.be/Wm8ZRu6YERk',
+                "New York Empire Baseball RAP Drill":'https://youtu.be/m0xP-zV0C0s',
+                "New York Empire Baseball Wall Swings":'https://youtu.be/cFk_lnXXMBE',
+                'New York Empire Baseball Stop & Bop':"https://www.youtube.com/watch?v=DCtRwckmbwI",
+                'New York Empire Baseball Barrel Turns':'https://youtu.be/4MHWFUWaxeI',
+                'New York Empire Baseball Offset Closed':'https://youtu.be/x3yCYsFZ4fI',
+                'New York Empire Baseball Offset Open':'https://youtu.be/mOxKbOFY59k',
+                'New York Empire Baseball Hookem Drill':'https://youtu.be/qGyzjOtuTi8',
+                "New York Empire Baseball Babe Ruth Swings":'https://youtu.be/YdxN1R7M2AA',
+                "New York Empire Baseball BBSB":'https://youtu.be/y0AnbcAJIOI',
+                "New York Empire Baseball Eyes Closed Tee":'https://www.youtube.com/watch?v=LXO3WE1qK_A',
+                "New York Empire Baseball Ball Hit":'https://www.youtube.com/watch?v=SIM1y7OuY9U&ab_channel=NewYorkEmpireBaseball',
+                "New York Empire Baseball Intention Swings":"https://youtu.be/xnQTB5ckGZo",
+                "New York Empire Baseball I O Bifurcation":"https://www.youtube.com/watch?v=wXCYc-hS5QE",
+                "New York Empire Baseball High Tee No Ball":"https://youtu.be/GWbO9yrKkjM",
+                "New York Empire Baseball Weighted Bat Series":"https://youtu.be/XwqSbtv4FRY",
+                "Reverse Throws":"test.com"
+                
+                // Add more link mappings here...
+            };
+            const linkArray = dataArray.map(item => {
+                const linkText = item.split("|")[0];
+                const linkUrl = linkMap[linkText] || item.split("|")[1] || "#";
+
+                // Check if the drill is in the link map and create a hyperlink
+                if (linkUrl !== "#") {
+                    return `<a href="${linkUrl}" target="_blank">${linkText}</a>`;
+                } else {
+                    // If the drill is not in the link map, display it as a basic string
+                    return linkText;
+                }
+                
+            });
+            return linkArray.join("<br />");
+        }
+        window.onload = getPlayerData;
+        function goToForm() {
+            window.location.href = "form.html";
+        }
+
+        function goToPlayersList() {
+            window.location.href = "players.html";
+        }
+    </script>   
+
+</body>
+</html>

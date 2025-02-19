@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Players</title>
+    <style>
+        body { font-family:"Quagmire", Arial, sans-serif; text-align: center; margin: 20px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 10px; padding: 10px; border: 1px solid #ddd; cursor: pointer; }
+        li:hover { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+
+    <div id="navigation">
+        <h1 id="playerName">Players</h1>
+        <button onclick="goToForm()">Back to Form</button>
+    </div>
+    <ul id="playerList"></ul>
+
+    <script>
+        function loadPlayers() {
+            fetch("http://localhost:8080/players")
+                .then(response => response.json())
+                .then(players => {
+                    const playerList = document.getElementById("playerList");
+                    playerList.innerHTML = "";
+
+                    players.forEach(player => {
+                        const li = document.createElement("li");
+                        li.textContent = player;
+                        li.onclick = () => {
+                            window.location.href = `player.html?name=${encodeURIComponent(player)}`;
+                        };
+                        playerList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error("Error loading players:", error));
+        }
+
+        window.onload = loadPlayers;
+        function goToForm() {
+            window.location.href = "form.html";
+        }
+        function goToForm() {
+            window.location.href = "form.html";
+        }
+
+        function goToPlayersList() {
+            window.location.href = "players.html";
+        }
+    </script>
+
+</body>
+</html>

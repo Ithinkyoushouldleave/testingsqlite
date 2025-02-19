@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New York Empire Baseball Training Forms and Data</title>
+    <style>
+        body {
+            font-family: "Quagmire", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        #navigation {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navigation">
+        <h1>New York Empire Baseball Training Forms and Data</h1>
+        <button onclick="goToForm()">Training Follow-up Form</button>
+        <button onclick="goToPlayersList()">Players</button>
+    </div>
+
+    <script>
+        function goToForm() {
+            window.location.href = "form.html";
+        }
+
+        function goToPlayersList() {
+            window.location.href = "players.html";
+        }
+    </script>
+
+</body>
+</html>
